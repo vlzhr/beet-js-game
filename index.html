@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Borscht.Beet</title>
+    <script src="pixi/pixi.min.js"></script>
+    <script src="pixi/keyboard.js"></script>
+    <link rel="stylesheet" href="basic.css">
+</head>
+<body>
+<script>
+
+    //Aliases
+    let Application = PIXI.Application,
+        Container = PIXI.Container,
+        loader = PIXI.loader,
+        resources = PIXI.loader.resources,
+        TextureCache = PIXI.utils.TextureCache,
+        Sprite = PIXI.Sprite;
+
+    //Create a Pixi Application
+    let app = new Application({
+            width: 900,
+            height: 500,
+            antialiasing: true,
+            transparent: true,
+            resolution: 1
+        }
+    );
+
+    document.body.appendChild(app.view);
+
+    loader
+        .add("images/cat.png")
+        .load(setup);
+
+    let beet;
+    let left;
+
+    function setup() {
+
+        //Create the `cat` sprite
+        beet = new Sprite(resources["images/cat.png"].texture);
+        beet.x = 150;
+        beet.y = 200;
+        beet.vy = 0;
+        beet.gravity = -5;
+        app.stage.addChild(beet);
+
+        left = leftMouse(0);
+        left.press = function() {
+            beet.vy = 20;
+        };
+        left.release = function() {
+            beet.vy = beet.vy * 0.8;
+            setTimeout(() => {beet.vy = beet.vy * 0.6;}, 150);
+            setTimeout(() => {beet.vy = 0;}, 300);
+        };
+
+        app.ticker.add(delta => gameLoop(delta));  // runs function gameLoop 60 times per sec
+    }
+
+    function gameLoop(delta){
+
+        if (beet.y - beet.gravity >= 20 ) {
+            beet.y -= beet.vy;
+        }
+        if (beet.y - beet.gravity <= app.renderer.height - 20 - beet.height ) {
+            beet.y -= beet.gravity;
+        }
+
+    }
+
+
+    // function onTouch() {
+    //     beet.vy += 10;
+    //     setTimeout(() => beet.vy)
+    // }
+    //
+    // document.addEventListener("DOMContentLoaded", function() {
+    //     document.body.addEventListener("click", onTouch)
+    // })
+</script>
+</body>
+</html>
