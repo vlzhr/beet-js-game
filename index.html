@@ -5,11 +5,13 @@
     <title>Borscht.Beet</title>
     <script src="pixi/pixi.min.js"></script>
     <script src="pixi/keyboard.js"></script>
+    <script src="pixi/collision.js"></script>
 
     <script>
         //Aliases
         let Application = PIXI.Application,
             Container = PIXI.Container,
+            Graphics = PIXI.Graphics,
             loader = PIXI.loader,
             resources = PIXI.loader.resources,
             TextureCache = PIXI.utils.TextureCache,
@@ -38,7 +40,7 @@
         .add("images/cat.png").add( "images/blob.png")
         .load(setup);
 
-    let beet, enemies=[];
+    let beet, healthBar, enemies=[];
     let left;
 
     function setup() {
@@ -60,18 +62,53 @@
 
         // control settings
         left = leftMouse(0);
-        left.press = function() {
+        leftArrow = keyboard(37);
+        leftArrow.press= left.press = function() {
             beet.vy = 12;
         };
-        left.release = function() {
+        leftArrow.release = left.release = function() {
             beet.vy = beet.vy * 0.8;
             setTimeout(() => {beet.vy = beet.vy * 0.6;}, 150);
             setTimeout(() => {beet.vy = 0;}, 300);
         };
 
 
+        //Create the health bar
+        healthBar = new Container();
+        healthBar.position.set(app.stage.width - 170, 4);
+        app.stage.addChild(healthBar);
+
+        //Create the black background rectangle
+        let innerBar = new Graphics();
+        innerBar.beginFill(0x000000);
+        innerBar.drawRect(0, 0, 128, 38);
+        innerBar.endFill();
+        healthBar.addChild(innerBar);
+
+        //Create the front red rectangle
+        let outerBar = new Graphics();
+        outerBar.beginFill(0xFF3300);
+        outerBar.drawRect(0, 0, 128, 38);
+        outerBar.endFill();
+        healthBar.addChild(outerBar);
+
+        healthBar.outer = outerBar;
+
+
 
         app.ticker.add(delta => gameLoop(delta));  // runs function gameLoop 60 times per sec
+    }
+
+    function checkCollision() {
+        enemies.forEach(function(enemy) {
+
+            if(hitRectangle(beet, enemy)) {
+                healthBar.outer.width -= 1;
+                return true;
+            }
+
+        });
+        return false;
     }
 
     function gameLoop(delta){
@@ -94,6 +131,8 @@
                 enemies[n] = new Enemy();
             }
         }
+
+        checkCollision();
 
     }
 
