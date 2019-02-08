@@ -3,6 +3,6 @@ body {
 }
 
 canvas {
-    background: url("https://i.imgur.com/jwryXjD.gif") no-repeat;
+    /*background: url("https://i.imgur.com/jwryXjD.gif") no-repeat;*/
     background-size: cover;
 }

@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Borscht.Beet</title>
-    <script src="pixi/pixi.min.js"></script>
+    <!--<script src="pixi/pixi.min.js"></script>-->
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
     <script src="pixi/keyboard.js"></script>
     <script src="pixi/collision.js"></script>
+    <script src="Steve.js"></script>
 
     <script>
         //Aliases
@@ -38,15 +40,27 @@
 
     loader
         .add("images/cat.png").add( "images/blob.png")
+        .add("ill/state-1.json")
         .load(setup);
 
-    let beet, healthBar, enemies=[];
+    let beet, healthBar, sheet, enemies=[];
     let left;
 
     function setup() {
 
         // main hero settings
-        beet = new Sprite(resources["images/cat.png"].texture);
+        let alienImages = ["images/boosted/1.png","images/boosted/2.png","images/boosted/3.png"];
+        let textureArray = [];
+
+        for (let i=0; i < 3; i++)
+        {
+            let texture = PIXI.Texture.from(alienImages[i]);
+            textureArray.push(texture);
+        };
+
+        beet = new MultiAnimatedSprite(textureArray);
+        beet.animationSpeed = 0.02;
+
         beet.x = 150;
         beet.y = 200;
         beet.vy = 0;
@@ -64,6 +78,7 @@
         left = leftMouse(0);
         leftArrow = keyboard(37);
         leftArrow.press= left.press = function() {
+            // beet.gotoAndStop(beet.totalFrames-1);
             beet.vy = 12;
         };
         leftArrow.release = left.release = function() {
@@ -133,6 +148,10 @@
         }
 
         checkCollision();
+
+
+        // animation
+        beet.nextStep();
 
     }
 
