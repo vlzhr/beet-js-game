@@ -1,4 +1,4 @@
-class Enemy extends Sprite {
+class Enemy extends PIXI.Sprite {
     constructor() {
         super(resources["images/knife.png"].texture);
 
@@ -12,7 +12,7 @@ class Enemy extends Sprite {
 }
 
 
-class BarrierElement extends Sprite {
+class BarrierElement extends PIXI.Sprite {
     constructor(y) {
         super(resources["images/meat-grinder.png"].texture);
 

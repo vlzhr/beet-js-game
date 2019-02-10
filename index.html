@@ -3,44 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Borscht.Beet</title>
-    <script src="pixi/pixi.min.js"></script>
-    <!--<script src="https://pixijs.download/release/pixi.min.js"></script>-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!--<script src="pixi/pixi.min.js"></script>-->
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
     <script src="pixi/keyboard.js"></script>
     <script src="pixi/collision.js"></script>
     <script src="Steve.js"></script>
     <script src="Background.js"></script>
-
-    <script>
-        //Aliases
-        let Application = PIXI.Application,
-            Container = PIXI.Container,
-            Graphics = PIXI.Graphics,
-            loader = PIXI.loader,
-            resources = PIXI.loader.resources,
-            TextureCache = PIXI.utils.TextureCache,
-            Sprite = PIXI.Sprite;
-
-        //Create a Pixi Application
-        let app = new Application({
-                width: 900,
-                height: 700,
-                antialiasing: true,
-                transparent: true,
-                resolution: 1
-            }
-        );
-
-    </script>
-
+    <script src="Coin.js"></script>
     <script src="Enemy.js"></script>
     <link rel="stylesheet" href="basic.css">
 </head>
 <body>
 <script>
+    //Aliases
+    let Application = PIXI.Application,
+        Container = PIXI.Container,
+        Graphics = PIXI.Graphics,
+        loader = PIXI.loader,
+        resources = PIXI.loader.resources,
+        TextureCache = PIXI.utils.TextureCache,
+        Sprite = PIXI.Sprite;
+
+    //Create a Pixi Application
+    let app = new Application({
+            width: window.innerWidth,
+            height: window.innerHeight,
+            antialiasing: true,
+            backgroundColor: 0x1099bb,
+            transparent: 'notMultiplied',
+            resolution: 1
+        }
+    );
+
+
     document.body.appendChild(app.view);
 
     loader
-        .add("images/cat.png").add("images/knife.png").add("images/blob.png").add("images/meat-grinder.png")
+        .add("images/knife.png").add("images/meat-grinder.png").add("images/coin.png")
         .add("ill/state-1.json")
         .add("ill/state-2.json")
         .add("images/background/static.png").add("images/background/1.png").add("images/background/2.png").add("images/background/3.png").add("images/background/4.png")
@@ -100,14 +100,19 @@
         barriers.push(new Barrier());
 
 
+        // coins settings
+        coins = new CoinsRaw();
+
+
         // control settings
         left = leftMouse(0);
+        t = touch();
         leftArrow = keyboard(37);
-        leftArrow.press= left.press = function() {
+        leftArrow.press= left.press = t.press = function() {
             beet.playAnimation("boost");
             beet.vy = 12;
         };
-        leftArrow.release = left.release = function() {
+        leftArrow.release = left.release = t.release = function() {
             beet.vy = beet.vy * 0.8;
             setTimeout(() => {beet.vy = beet.vy * 0.6;}, 150);
             setTimeout(() => {beet.vy = 0;}, 300);
@@ -132,7 +137,6 @@
         outerBar.drawRect(0, 0, 128, 38);
         outerBar.endFill();
         healthBar.addChild(outerBar);
-
         healthBar.outer = outerBar;
 
 
@@ -187,6 +191,7 @@
         checkCollision();
 
         for (let b of bg) { b.nextStep(beetXPlusFactor); }
+        coins.nextStep(beetXPlusFactor);
 
         // animation
 
