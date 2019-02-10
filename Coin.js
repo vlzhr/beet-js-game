@@ -2,10 +2,11 @@ class Coin extends PIXI.Sprite {
     constructor(arg, num, y) {
         super(resources[arg].texture);
 
-        this.y = y;
         this.initialProportion = this.width/this.height;
         this.width = 50;
         this.height = this.width*this.initialProportion;
+
+        this.y = y;
         this.x = app.renderer.width + num*this.width + 5*num;
 
         app.stage.addChild(this);

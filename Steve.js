@@ -13,6 +13,8 @@ class MultiAnimatedSprite extends PIXI.extras.AnimatedSprite {
 
     playAnimation(animationName) {
 
+        this.animationName = animationName;
+
         if (this.isDefault && animationName !== "default") { this.isDefault = false; }
         if (!this.isDefault && animationName === "default") { this.isDefault = true; }
 
