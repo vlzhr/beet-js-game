@@ -30,6 +30,9 @@
         <img class="button" src="images/button.png" alt="" onclick="game.run()">
     </div>
 </div>
+<div class="welcomescreen shown" onclick="game.welcomeScreenClosed = true;">
+    <img class="welcomescreen__content" src="images/rules-screen.png" alt="">
+</div>
 <script>
     //Aliases
     let Application = PIXI.Application,
@@ -62,7 +65,7 @@
         .add("images/bomb/1.png").add("images/bomb/2.png").add("images/bomb/3.png").add("images/bomb/4.png").add("images/bomb/5.png").add("images/bomb/6.png").add("images/bomb/7.png").add("images/bomb/8.png").add("images/bomb/9.png")
         .load(setup);
 
-    let beet, healthBar, sheet, enemies=[], barriers=[];
+    let beet, healthBar, sheet, enemies=[], barriers=[], coins=[];
     let left;
     let game = {
         on: true,
@@ -73,7 +76,8 @@
             // counter.toNull();
             location.reload();
         },
-        prewordShown: false
+        prewordShown: false,
+        welcomeScreenClosed: false
     };
     let metersCountStop = false;
 
@@ -130,7 +134,7 @@
 
 
         // coins settings
-        coins = new CoinsWord();
+
 
 
         // control settings
@@ -153,13 +157,17 @@
     }
 
     function checkCollision() {
-        coins.parts.forEach(function(c) {
-            if(hitRectangle(beet, c)) {
-                if (c.alpha) {counter.coinsPlus();}
-                c.alpha = 0;
-                return true;
-            }
-        });
+        for (let co of coins) {
+            co.parts.forEach(function (c) {
+                if (hitRectangle(beet, c)) {
+                    if (c.alpha) {
+                        counter.coinsPlus();
+                    }
+                    c.alpha = 0;
+                    return true;
+                }
+            });
+        }
         enemies.forEach(function(enemy) {
             if(hitRectangle(beet, enemy)) {
                 beet.playAnimation("bomb");
@@ -223,18 +231,28 @@
         checkCollision();
 
         for (let b of bg) { b.nextStep(beetXPlusFactor); }
-        coins.nextStep(beetXPlusFactor);
+        for (let c of coins) {
+            c.nextStep(beetXPlusFactor);
+        }
+
 
         if (!metersCountStop) { counter.metersPlus(); metersCountStop = true; setTimeout(() => {metersCountStop = false;}, 300) }
 
 
+        if (game.welcomeScreenClosed) {
+            document.querySelector(".welcomescreen").classList.remove("shown");
+            coins = [new CoinsWord()];
+
+            game.welcomeScreenClosed = false;
+        }
+
         if (game.prewordShown) {
-            coins = new CoinsRaw();
+            coins = [new CoinsRaw()];
             enemies.push(new Enemy());
             setTimeout(() => { enemies.push(new Enemy()); }, 700);
             setTimeout(() => { enemies.push(new Enemy()); }, 1400);
             barriers.push(new Barrier());
-            
+
             game.prewordShown = false;
 
         }

@@ -21,7 +21,7 @@ canvas {
     font-weight: bold;
 }
 
-.winscreen {
+.winscreen, .welcomescreen {
     position: absolute;
     background-color: rgba(	25, 21, 34, 0.7 );
     width: 100%;
@@ -33,7 +33,7 @@ canvas {
     justify-content: center;
     pointer-events: none;
 }
-.winscreen.shown {
+.winscreen.shown, .welcomescreen.shown {
     transition: opacity 1s;
     opacity: 1;
     pointer-events: all;
@@ -47,6 +47,14 @@ canvas {
     text-align: center;
     font-size: 24px;
     font-weight: 800;
+}
+
+.welcomescreen__content {
+    display: block;
+    width: 700px;
+    max-width: 80%;
+    margin: auto;
+    cursor: pointer;
 }
 
 .winscreen h2 {

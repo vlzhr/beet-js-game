@@ -20,9 +20,9 @@ function hitRectangle(r1, r2) {
 
     if (r1.type === "main") {
         r1.halfWidth = r1.width / 3;
-        r1.halfHeight = r1.height / 4;
+        r1.halfHeight = r1.height / 5;
         r1.centerX = r1.x;
-        r1.centerY = r1.y + r1.height / 20 - r1.halfHeight*0.3;
+        r1.centerY = r1.y - r1.halfHeight/2;
     }
 
     //Calculate the distance vector between the sprites

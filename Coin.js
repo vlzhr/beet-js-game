@@ -68,14 +68,16 @@ class CoinsWord extends CoinsRaw {
         for (let raw in borschtWordMockup) {
             for (let cell in borschtWordMockup[raw]) {
                 if (borschtWordMockup[raw][cell]) {
-                    this.parts.push(new Coin(+cell, 80+raw*60));
+                    this.parts.push(new Coin(+cell-13, 80+raw*50));
                 }
             }
         }
     }
 
     whenRunAway() {
-        game.prewordShown = true;
+        if (this.parts.length > 15) {
+            game.prewordShown = true;
+        }
     }
 }
 
