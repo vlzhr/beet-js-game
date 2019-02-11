@@ -82,7 +82,7 @@ function touch() {
     key.release = undefined;
     //The `downHandler`
     key.downHandler = function(event) {
-        if (event.keyCode === key.code) {
+        if (true) {
             if (key.isUp && key.press) key.press();
             key.isDown = true;
             key.isUp = false;

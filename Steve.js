@@ -38,6 +38,9 @@ class MultiAnimatedSprite extends PIXI.extras.AnimatedSprite {
     }
 
     toDefault() {
-        this.playAnimation("default");
+        if (!this.isDefault) {
+            console.log("def");
+            this.playAnimation("default");
+        }
     }
 }
