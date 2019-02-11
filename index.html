@@ -13,9 +13,23 @@
     <script src="Coin.js"></script>
     <script src="Enemy.js"></script>
     <script src="HealthBar.js"></script>
+    <script src="Counter.js"></script>
     <link rel="stylesheet" href="basic.css">
 </head>
 <body>
+<div class="counter">
+    Your distance: <span class="value distance-value">0</span> meters <br>
+    Coins collected: <span class="value coins-value">0</span>
+</div>
+<div class="winscreen">
+    <div class="winscreen__content">
+        <h2>YOUR SCORE</h2>
+        <div class="winscreen__score-value value">0</div>
+        <div>YOU COLLECTED: <span class="winscreen__coins-value value">0</span></div>
+        <div>YOU FLEW: <span class="winscreen__distance-value value">0</span></div>
+        <img class="button" src="images/button.png" alt="" onclick="game.run()">
+    </div>
+</div>
 <script>
     //Aliases
     let Application = PIXI.Application,
@@ -45,11 +59,22 @@
         .add("ill/state-1.json")
         .add("ill/state-2.json")
         .add("images/background/static.png").add("images/background/1.png").add("images/background/2.png").add("images/background/3.png").add("images/background/4.png")
+        .add("images/bomb/1.png").add("images/bomb/2.png").add("images/bomb/3.png").add("images/bomb/4.png").add("images/bomb/5.png").add("images/bomb/6.png").add("images/bomb/7.png").add("images/bomb/8.png").add("images/bomb/9.png")
         .load(setup);
 
     let beet, healthBar, sheet, enemies=[], barriers=[];
     let left;
-    let game = {on: true};
+    let game = {
+        on: true,
+        run: function() {
+            // // to do : add game reloading without page reloading
+            // this.on = true;
+            // winscreen.hide();
+            // counter.toNull();
+            location.reload();
+        }
+    };
+    let metersCountStop = false;
 
     function setup() {
 
@@ -78,12 +103,18 @@
             let texture2 = PIXI.Texture.fromFrame(i2);
             textureArray.push(texture2);
         }
+        for (const i3 of [1,2,3,4,5,6,7,8,9]) {
+            let texture3 = PIXI.Texture.from("images/bomb/"+i3+".png");
+            textureArray.push(texture3);
+        }
 
         beet = new MultiAnimatedSprite(textureArray, {
             "boost": {"states": [3,4,5], "loop": false, "scale": 0.25},
-            "default": {"states": [0,1,2], "loop": true, "scale": 0.25}
+            "default": {"states": [0,1,2], "loop": true, "scale": 0.25},
+            "bomb": {"states": [6,7,8,9,10,11,12,13,14], "loop": false, "scale": 0.25}
         });
         beet.animationSpeed = 0.1;
+        beet.anchor.set(0.5,0.5);
 
         // beet.height = 60;
         // beet.width = 120;
@@ -106,10 +137,6 @@
         coins = new CoinsRaw();
 
 
-        // health bar settings
-        healthBar = new HealthBar();
-
-
         // control settings
         left = leftMouse(0);
         t = touch();
@@ -125,39 +152,33 @@
         };
 
 
-        // //Create the health bar
-        // healthBar = new Container();
-        // healthBar.position.set(app.stage.width - 170, 4);
-        // app.stage.addChild(healthBar);
-        //
-        // //Create the black background rectangle
-        // let innerBar = new Graphics();
-        // innerBar.beginFill(0x000000);
-        // innerBar.drawRect(0, 0, 128, 38);
-        // innerBar.endFill();
-        // healthBar.addChild(innerBar);
-        //
-        // //Create the front red rectangle
-        // let outerBar = new Graphics();
-        // outerBar.beginFill(0xFF3300);
-        // outerBar.drawRect(0, 0, 128, 38);
-        // outerBar.endFill();
-        // healthBar.addChild(outerBar);
-        // healthBar.outer = outerBar;
-
-
 
         app.ticker.add(delta => gameLoop(delta));  // runs function gameLoop 60 times per sec
     }
 
     function checkCollision() {
-        enemies.forEach(function(enemy) {
-
-            if(hitRectangle(beet, enemy)) {
-                healthBar.minus();
+        coins.parts.forEach(function(c) {
+            if(hitRectangle(beet, c)) {
+                if (c.alpha) {counter.coinsPlus();}
+                c.alpha = 0;
                 return true;
             }
-
+        });
+        enemies.forEach(function(enemy) {
+            if(hitRectangle(beet, enemy)) {
+                beet.playAnimation("bomb");
+                winscreen.show();
+                game.on = false;
+                return true;
+            }
+        });
+        barriers[0].elements.forEach(function(b) {
+            if(hitRectangle(beet, b)) {
+                beet.playAnimation("bomb");
+                winscreen.show();
+                game.on = false;
+                return true;
+            }
         });
         return false;
     }
@@ -200,7 +221,8 @@
         for (let b of bg) { b.nextStep(beetXPlusFactor); }
         coins.nextStep(beetXPlusFactor);
 
-        // animation
+        if (!metersCountStop) { counter.metersPlus(); metersCountStop = true; setTimeout(() => {metersCountStop = false;}, 300) }
+
 
     }
 

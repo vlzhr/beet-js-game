@@ -8,7 +8,7 @@ function hitRectangle(r1, r2) {
 
     //Find the center points of each sprite
     r1.centerX = r1.x + r1.width / 2;
-    r1.centerY = r1.y + r1.height / 20;
+    r1.centerY = r1.y + r1.height / 2;
     r2.centerX = r2.x + r2.width / 2;
     r2.centerY = r2.y + r2.height / 2;
 
@@ -18,11 +18,11 @@ function hitRectangle(r1, r2) {
     r2.halfWidth = r2.width / 2;
     r2.halfHeight = r2.height / 2;
 
-    if (r1.animationName === "boost") {
-        r1.halfWidth *= 0.7;
-        r1.halfHeight *= 0.4;
-        r1.centerY -= r1.halfHeight*0.45;
-        r1.centerX += r1.halfWidth * 0.2;
+    if (r1.type === "main") {
+        r1.halfWidth = r1.width / 8;
+        r1.halfHeight = r1.height / 4;
+        r1.centerX = r1.x + r1.width / 2;
+        r1.centerY = r1.y + r1.height / 20 - r1.halfHeight*0.3;
     }
 
     //Calculate the distance vector between the sprites
