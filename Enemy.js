@@ -3,10 +3,12 @@ class Enemy extends PIXI.Sprite {
         super(resources["images/knife.png"].texture);
 
         this.y = Math.random() * (app.renderer.height-100) + 10;
-        this.width = 64*1.6;
+        this.width = 64*1.6*1.5;
         this.x = app.renderer.width-this.width;
-        this.height = 9.87234*1.6;
+        this.height = 9.87234*1.6*1.5;
         this.speed = 5 + Math.random()*5;
+        this.type = "knife";
+
         app.stage.addChild(this);
     }
 }
@@ -16,8 +18,8 @@ class BarrierElement extends PIXI.Sprite {
     constructor(y) {
         super(resources["images/meat-grinder.png"].texture);
 
-        this.width = 80;
-        this.height = 80;
+        this.width = 120;
+        this.height = 120;
 
         this.y = y;
         this.x = app.renderer.width+this.width-10;
@@ -32,8 +34,8 @@ class BarrierElement extends PIXI.Sprite {
 class Barrier {
     constructor() {
         this.elements = [];
-        for (let n=0; n < Math.floor(Math.random()*4)+2; n++) {
-            this.elements.push(new BarrierElement(app.renderer.height-80-n*80));
+        for (let n=0; n < Math.floor(Math.random()*3)+2; n++) {
+            this.elements.push(new BarrierElement(app.renderer.height-80-n*105));
         }
     }
 

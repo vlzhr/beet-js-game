@@ -32,7 +32,21 @@ document.addEventListener("DOMContentLoaded", function () {
             this.coinsNode.innerHTML = counter.coinsValue;
             this.metersNode.innerHTML = counter.metersValue;
             this.scoreNode.innerHTML = counter.metersValue + counter.coinsValue*6;
-            this.node.classList.add("shown");
+            setTimeout(() => {
+                beet.alpha = 0;
+                for (let k of enemies) {
+                    k.alpha = 0;
+                }
+                this.node.classList.add("shown");
+            }, 700);
+
+            setTimeout(function() {
+                console.log("log");
+                game.touchListener = function() {
+                    winscreen.node.remove();
+                    location.reload();
+                };
+            }, 2500)
         }
     };
 });

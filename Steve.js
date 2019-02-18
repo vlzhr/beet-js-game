@@ -5,6 +5,8 @@ class MultiAnimatedSprite extends PIXI.extras.AnimatedSprite {
 
         this.allStates = arg;
         this.animations = states ? states : {};
+        this.type = "main";
+        this.scale.x = this.scale.y = 0.25;
 
         // this.width = this.allStates[0].orig.
 
@@ -15,7 +17,6 @@ class MultiAnimatedSprite extends PIXI.extras.AnimatedSprite {
         if (!game.on) {return;}
 
         this.animationName = animationName;
-        this.type = "main";
 
         if (this.isDefault && animationName !== "default") { this.isDefault = false; }
         if (!this.isDefault && animationName === "default") { this.isDefault = true; }

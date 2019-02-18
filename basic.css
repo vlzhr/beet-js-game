@@ -32,6 +32,7 @@ canvas {
     flex-direction: column;
     justify-content: center;
     pointer-events: none;
+    z-index: 300;
 }
 .winscreen.shown, .welcomescreen.shown {
     transition: opacity 1s;

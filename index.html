@@ -27,10 +27,10 @@
         <div class="winscreen__score-value value">0</div>
         <div>YOU COLLECTED: <span class="winscreen__coins-value value">0</span></div>
         <div>YOU FLEW: <span class="winscreen__distance-value value">0</span></div>
-        <img class="button" src="images/button.png" alt="" onclick="game.run()">
+        <img class="button" src="images/button.png" alt="">
     </div>
 </div>
-<div class="welcomescreen shown" onclick="game.welcomeScreenClosed = true;">
+<div class="welcomescreen shown" onclick="game.welcomeScreenClosed = true; game.on=true;">
     <img class="welcomescreen__content" src="images/rules-screen.png" alt="">
 </div>
 <script>
@@ -68,7 +68,7 @@
     let beet, healthBar, sheet, enemies=[], barriers=[], coins=[];
     let left;
     let game = {
-        on: true,
+        on: false,
         run: function() {
             // // to do : add game reloading without page reloading
             // this.on = true;
@@ -77,7 +77,8 @@
             location.reload();
         },
         prewordShown: false,
-        welcomeScreenClosed: false
+        welcomeScreenClosed: false,
+        touchListener: false
     };
     let metersCountStop = false;
 
@@ -119,6 +120,8 @@
             "bomb": {"states": [9,10,11,12,13,14,15,16,17], "loop": false, "scale": 0.25}
         });
         beet.animationSpeed = 0.23;
+        beet.scaleX = 0.25;
+        beet.scaleY = 0.25;
         beet.anchor.set(0.5,0.5);
 
         // beet.height = 60;
@@ -138,19 +141,6 @@
 
 
         // control settings
-        left = leftMouse(0);
-        t = touch();
-        leftArrow = keyboard(37);
-        leftArrow.press= left.press = t.press = function() {
-            beet.playAnimation("boost");
-            beet.vy = 12;
-        };
-        leftArrow.release = left.release = t.release = function() {
-            beet.vy = beet.vy * 0.8;
-            setTimeout(() => {beet.vy = beet.vy * 0.6;}, 150);
-            setTimeout(() => {beet.vy = 0;}, 300);
-        };
-
 
 
         app.ticker.add(delta => gameLoop(delta));  // runs function gameLoop 60 times per sec
@@ -192,19 +182,19 @@
     function gameLoop(delta){
         if (!game.on) {return;}
 
-        let beetXPlusFactor = 1.3;
+        let beetXPlusFactor = 1.7;
         let wasBoosted = false;
 
         // main hero movement
         if (beet.y - beet.gravity >= 20 ) {  // if not hit the top
             if (beet.vy > 0) {
-                beetXPlusFactor = 1.3;
+                beetXPlusFactor = 1.7;
                 wasBoosted = true;
                 console.log("boosted");
             }
             beet.y -= beet.vy;  // boost to the top
         }
-        if (beet.y - beet.gravity <= app.renderer.height - 20 - beet.height ) {  // if not on the bottom
+        if (beet.y - beet.gravity <= app.renderer.height - 10 ) {  // if not on the bottom
             beet.y -= beet.gravity;
 
             if (!wasBoosted) {
@@ -243,11 +233,28 @@
             document.querySelector(".welcomescreen").classList.remove("shown");
             coins = [new CoinsWord()];
 
+            left = leftMouse(0);
+            t = touch();
+            leftArrow = keyboard(37);
+            leftArrow.press= left.press = t.press = function() {
+                beet.playAnimation("boost");
+                beet.vy = 12;
+                if (game.touchListener) {
+                    game.touchListener();
+                }
+            };
+            leftArrow.release = left.release = t.release = function() {
+                beet.vy = beet.vy * 0.8;
+                setTimeout(() => {beet.vy = beet.vy * 0.6;}, 150);
+                setTimeout(() => {beet.vy = 0;}, 300);
+            };
+
             game.welcomeScreenClosed = false;
         }
 
         if (game.prewordShown) {
             coins = [new CoinsRaw()];
+            setTimeout(()=> {coins.push(new CoinsRaw())}, 5000);
             enemies.push(new Enemy());
             setTimeout(() => { enemies.push(new Enemy()); }, 700);
             setTimeout(() => { enemies.push(new Enemy()); }, 1400);

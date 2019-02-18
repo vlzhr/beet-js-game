@@ -24,6 +24,12 @@ function hitRectangle(r1, r2) {
         r1.centerX = r1.x;
         r1.centerY = r1.y - r1.halfHeight/2;
     }
+    if (r2.type === "knife") {
+        r2.centerX = r2.x + r2.width / 4;
+        r2.centerY = r2.y + r2.height / 2;
+        r2.halfWidth = r2.width / 4;
+        r2.halfHeight = r2.height / 2;
+    }
 
     //Calculate the distance vector between the sprites
     vx = r1.centerX - r2.centerX;

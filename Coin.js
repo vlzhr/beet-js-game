@@ -27,15 +27,15 @@ class Coin extends PIXI.Sprite {
 class CoinsRaw {
     buildRaw() {
         this.y = 50 + Math.random()*app.renderer.height/3.2;
-        this.parts = [0,1,2,3,4].map(x => new Coin(x, this.y));
+        this.parts = [0,1,2,3,4].map(x => new Coin(x+3, this.y));
 
         for (let raw = 0; Math.floor(Math.random() * 3); raw++) {
             this.y += this.parts[0].height + 5;
-            this.parts = this.parts.concat([0,1,2,3,4].map(x => new Coin(x, this.y)));
+            this.parts = this.parts.concat([0,1,2,3,4].map(x => new Coin(x+3, this.y)));
         }
 
         for (let extra = 0; Math.floor(Math.random() * 3); extra++) {
-            this.parts.unshift(new Coin(-1-extra, this.y));
+            this.parts.unshift(new Coin(2-extra, this.y));
         }
     }
 
@@ -54,7 +54,7 @@ class CoinsRaw {
             this.parts[partN].x -= this.speed*xSpeedFactor;
         }
 
-        if (this.parts[this.parts.length-1].x < -this.parts[this.parts.length-1].width) {
+        if (this.parts[this.parts.length-1].x < -this.parts[this.parts.length-1].width*2) {
             this.whenRunAway();
         }
     }
