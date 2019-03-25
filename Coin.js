@@ -13,8 +13,9 @@ class Coin extends PIXI.Sprite {
         super(resources["images/coin.png"].texture);
 
         this.initialProportion = this.width/this.height;
-        this.width = 50;
+        this.width = Math.ceil(50 * sizeScale());
         this.height = this.width*this.initialProportion;
+
 
         this.y = y;
         this.x = app.renderer.width + (num)*this.width + 5*num;
@@ -68,7 +69,7 @@ class CoinsWord extends CoinsRaw {
         for (let raw in borschtWordMockup) {
             for (let cell in borschtWordMockup[raw]) {
                 if (borschtWordMockup[raw][cell]) {
-                    this.parts.push(new Coin(+cell-13, 80+raw*50));
+                    this.parts.push(new Coin(+cell-13, (80+raw*50)*sizeScale()));
                 }
             }
         }

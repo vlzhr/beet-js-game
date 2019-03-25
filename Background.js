@@ -14,7 +14,7 @@ class StaticBackground extends PIXI.Sprite {
     constructor(arg) {
         super(resources[arg].texture);
 
-        this.anchor.set(0.2, 0);
+        this.anchor.set(0, 0);
 
         this.initProportion = this.width / this.height;
         this.height = app.renderer.height;

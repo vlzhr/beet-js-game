@@ -17,10 +17,12 @@
     <link rel="stylesheet" href="basic.css">
 </head>
 <body>
-<div class="counter">
-    Your distance: <span class="value distance-value">0</span> meters <br>
-    Coins collected: <span class="value coins-value">0</span>
-</div>
+<main>
+    <div class="counter">
+        Your distance: <span class="value distance-value">0</span> meters<br>
+        Coins collected: <span class="value coins-value">0</span>
+    </div>
+</main>
 <div class="winscreen">
     <div class="winscreen__content">
         <h2>YOUR SCORE</h2>
@@ -43,19 +45,47 @@
         TextureCache = PIXI.utils.TextureCache,
         Sprite = PIXI.Sprite;
 
-    //Create a Pixi Application
+
+
+    let SCALE = 1,
+        WIDTH = window.innerWidth < 1280 ? window.innerWidth : 1280;
+
+    if (innerWidth > 1280) {
+        SCALE = innerWidth/1280;
+    }
+
+    let HEIGHT = 900.0 * WIDTH / 1280;
+
+    if (innerHeight < HEIGHT*SCALE) {
+        SCALE = innerHeight / 900;
+        HEIGHT = 900;
+        WIDTH = innerWidth / SCALE;
+    }
+
+
     let app = new Application({
-            width: window.innerWidth,
-            height: window.innerHeight,
+            width: WIDTH,//window.innerWidth,
+            height: HEIGHT,//window.innerHeight,
             antialiasing: true,
             backgroundColor: 0x1099bb,
             transparent: 'notMultiplied',
             resolution: 1
+            // autoResize: true
         }
     );
 
+    app.renderer.view.style.width = WIDTH + "px";
+    app.renderer.view.style.height = HEIGHT + "px";
+    // app.renderer.view.style.maxWidth = WIDTH + "px";
+    // app.renderer.view.style.maxHeight = HEIGHT + "px";
+    // app.renderer.view.style.transform = "scale(" + SCALE + ")";
+    // app.renderer.view.style.position = "absolute";
+    // app.renderer.view.style.top = "0";
+    // app.renderer.view.style.left = "0";
+    main = document.querySelector("main");
+    // main.style.transform = "scale(" + SCALE + ")";
 
-    document.body.appendChild(app.view);
+    main.appendChild(app.view);
 
     loader
         .add("images/knife.png").add("images/meat-grinder.png").add("images/coin.png").add("images/heart.png")
@@ -81,6 +111,35 @@
         touchListener: false
     };
     let metersCountStop = false;
+
+
+    function sizeScale(forReal) {
+        return forReal ? innerHeight / HEIGHT : 1;
+    }
+
+    let resize = function() {
+
+        const ratio = Math.floor(sizeScale(true)*100)/100;
+        // document.querySelector("main").style.transform = `scale(${ratio})  translateX(-${(1-ratio)*100}%) translateY(-${(1-ratio)*100}%)`;
+        // document.querySelector("canvas").style.margin = "0 auto";
+
+
+        return;
+
+        for (const container of app.stage.children) {
+            if (container.scaleCf !== undefined) {
+                container.scaleCf = ratio;
+            } else {
+                container.scale.x = container.scale.y = ratio;
+            }
+        }
+
+        app.renderer.resize(Math.ceil(WIDTH * ratio), Math.ceil(HEIGHT * ratio));
+
+    };
+
+    window.addEventListener("resize", resize);
+
 
     function setup() {
 
@@ -126,10 +185,10 @@
 
         // beet.height = 60;
         // beet.width = 120;
-        beet.x = 150;
-        beet.y = 200;
+        beet.x = sizeScale()*150;
+        beet.y = sizeScale()*200;
         beet.vy = 0;
-        beet.gravity = -5;
+        beet.gravity = sizeScale()*-5;
         app.stage.addChild(beet);
 
 
@@ -142,7 +201,7 @@
 
         // control settings
 
-
+        resize();
         app.ticker.add(delta => gameLoop(delta));  // runs function gameLoop 60 times per sec
     }
 
@@ -182,13 +241,12 @@
     function gameLoop(delta){
         if (!game.on) {return;}
 
-        let beetXPlusFactor = 1.7;
+        let beetXPlusFactor = (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream ? 3.3 :1.7)*sizeScale();
         let wasBoosted = false;
 
         // main hero movement
         if (beet.y - beet.gravity >= 20 ) {  // if not hit the top
             if (beet.vy > 0) {
-                beetXPlusFactor = 1.7;
                 wasBoosted = true;
                 console.log("boosted");
             }
@@ -238,7 +296,7 @@
             leftArrow = keyboard(37);
             leftArrow.press= left.press = t.press = function() {
                 beet.playAnimation("boost");
-                beet.vy = 12;
+                beet.vy = sizeScale()*12;
                 if (game.touchListener) {
                     game.touchListener();
                 }
